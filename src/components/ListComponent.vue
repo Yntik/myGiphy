@@ -1,10 +1,13 @@
 <template>
     <div>
-        <div class="list-container">
+        <div class="list-container" v-if="list.length">
             <div v-for="(item, index) in list" :data-atr="item.id + index" :key="item.id + index ">
                 <img :src="item.images['original']['url']"/>
             </div>
-            <button @click="getMore">More</button>
+            <button class="more" @click="getMore">More</button>
+        </div>
+        <div class="list-container" v-else>
+            <h1 class="warning"> Search don't result </h1>
         </div>
     </div>
 </template>
@@ -23,6 +26,10 @@
 </script>
 
 <style scoped lang="scss">
+    .warning {
+        color: red;
+        text-align: center;
+    }
     .list-container {
         display: grid;
         grid-template-columns: auto auto auto;
@@ -33,6 +40,27 @@
         img {
             width: 100%;
             object-fit: cover
+        }
+
+        .more{
+            -webkit-appearance: none;
+            padding: 0;
+            margin: 10px 0;
+            background: aqua;
+            outline: none;
+            grid-column: 2/span 1;
+            height: 40px;
+
+        }
+    }
+
+    @media (max-width: 768px) {
+        .list-container {
+            display: grid;
+            grid-template-columns: auto;
+            align-items: center;
+            max-width: 768px;
+            margin: 0 auto;
         }
     }
 </style>

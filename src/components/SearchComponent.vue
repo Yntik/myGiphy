@@ -13,6 +13,13 @@
       return {
         searchQuery: ''
       }
+    },
+    watch: {
+      searchQuery() {
+        this.$emit('search', {
+          searchQuery: this.searchQuery
+        })
+      }
     }
   }
 </script>
@@ -25,5 +32,37 @@
 
     .search-input {
         width: auto;
+        height: 40px;
+        font-size: 25px;
+        margin: 10px 0;
+    }
+
+    .search-button {
+        -webkit-appearance: none;
+        padding: 0;
+        margin: 10px 0;
+        background: aqua;
+        outline: none;
+    }
+
+    @media (max-width: 768px) {
+        .search-container {
+            display: grid;
+            grid-template-columns: 1fr 25%;
+        }
+
+        .search-input {
+            width: auto;
+            height: 20px;
+            font-size: 15px;
+            margin: 5px 0;
+        }
+        .search-button {
+            -webkit-appearance: none;
+            padding: 0;
+            margin: 5px 0;
+            background: aqua;
+            outline: none;
+        }
     }
 </style>

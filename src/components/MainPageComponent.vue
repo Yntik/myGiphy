@@ -2,11 +2,11 @@
     <div class="main-container">
         <div class="container">
             <SearchComponent
+                    @search="search"
             >
             </SearchComponent>
             <ListComponent
                     :list="list"
-                    :currentIndex="currentIndex"
                     @getMore="getMore">
             </ListComponent>
         </div>
@@ -29,18 +29,34 @@
     data() {
       return {
         list: [],
+        currentIndex: 1,
+        limit: 24,
+
       }
     },
     async created() {
-      let data = (await axios.get(`${apiGiphyConfig.trending}?api_key=${apiGiphyConfig.apiKey}&limit=4`)).data.data
+      let data =
+        (await axios.get(`${apiGiphyConfig.trending}?api_key=${apiGiphyConfig.apiKey}&limit=${this.limit * this.currentIndex}`)).data.data
       this.$set(this, 'list', data)
     },
     methods: {
       async getMore() {
-        let data = (await axios.get(`${apiGiphyConfig.trending}?api_key=${apiGiphyConfig.apiKey}&limit=4`)).data.data
+        this.currentIndex++
+        let data = (await
+          axios.get(`${apiGiphyConfig.trending}?api_key=${apiGiphyConfig.apiKey}&offset=${this.limit * (this.currentIndex- 1) }&limit=${this.limit * this.currentIndex}&rating=R&lang=th`)).data.data
         for(let item of data) {
           this.list.push(item)
         }
+      },
+      async search(e) {
+        let data
+        if (e.searchQuery) {
+          data = (await axios.get(`${apiGiphyConfig.search}?api_key=${apiGiphyConfig.apiKey}&q=${e.searchQuery}&limit=24`)).data.data
+        }
+        else {
+          data = (await axios.get(`${apiGiphyConfig.trending}?api_key=${apiGiphyConfig.apiKey}&limit=${this.limit * this.currentIndex}`)).data.data
+        }
+        this.$set(this, 'list', data)
       }
     }
   }
