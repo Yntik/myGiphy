@@ -1,10 +1,16 @@
 <template>
-    
+    <ListComponent>
+    </ListComponent>
 </template>
 
 <script>
+  import ListComponent from './ListComponent.vue'
+
   export default {
-    name: "MainPageComponent"
+    name: "MainPageComponent",
+    components: {
+      ListComponent
+    },
   }
 </script>
 
