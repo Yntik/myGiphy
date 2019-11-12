@@ -18,6 +18,9 @@
   }
 </script>
 
-<style scoped>
-
+<style lang="scss">
+    body {
+        background: black;
+        margin: 0;
+    }
 </style>
