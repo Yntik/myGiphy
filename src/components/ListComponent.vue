@@ -56,11 +56,12 @@
 
     @media (max-width: 768px) {
         .list-container {
-            display: grid;
-            grid-template-columns: auto;
-            align-items: center;
             max-width: 768px;
-            margin: 0 auto;
+            grid-template-columns: auto;
+            .more{
+                grid-column: 1/span 1;
+
+            }
         }
     }
 </style>
