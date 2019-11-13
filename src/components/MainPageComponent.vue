@@ -16,12 +16,12 @@
 <script>
   import ListComponent from './ListComponent.vue'
   import SearchComponent from './SearchComponent.vue'
-  import axios from 'axios'
-  import apiGiphyConfig from '../../apiGiphyConfig.json'
+  import apiMixin from '../mixin/apiMixin'
 
 
   export default {
     name: "MainPageComponent",
+    mixins: [apiMixin],
     components: {
       ListComponent,
       SearchComponent
@@ -29,34 +29,50 @@
     data() {
       return {
         list: [],
-        currentIndex: 1,
         limit: 24,
+        numberLoadedGif: 0
 
       }
     },
     async created() {
-      let data =
-        (await axios.get(`${apiGiphyConfig.trending}?api_key=${apiGiphyConfig.apiKey}&limit=${this.limit * this.currentIndex}`)).data.data
-      this.$set(this, 'list', data)
+      try {
+        let data = await this.trending(this.limit, this.numberLoadedGif)
+        this.numberLoadedGif += data.length
+        this.limit += data.length
+        this.$set(this, 'list', data)
+      } catch (e) {
+        console.log(e)
+      }
+
     },
     methods: {
       async getMore() {
-        this.currentIndex++
-        let data = (await
-          axios.get(`${apiGiphyConfig.trending}?api_key=${apiGiphyConfig.apiKey}&offset=${this.limit * (this.currentIndex- 1) }&limit=${this.limit * this.currentIndex}&rating=R&lang=th`)).data.data
-        for(let item of data) {
-          this.list.push(item)
+        try {
+          let data = await this.trending(this.limit, this.numberLoadedGif)
+          for (let item of data) {
+            this.list.push(item)
+          }
+        } catch (e) {
+          console.log(e)
         }
       },
       async search(e) {
-        let data
-        if (e.searchQuery) {
-          data = (await axios.get(`${apiGiphyConfig.search}?api_key=${apiGiphyConfig.apiKey}&q=${e.searchQuery}&limit=24`)).data.data
+        try {
+          let data
+          if (e.searchQuery) {
+            data = await this.querySearch(e.searchQuery, this.limit - this.numberLoadedGif)
+          }
+          else {
+            data = await this.trending(this.limit, this.numberLoadedGif)
+            this.numberLoadedGif += data.length
+            this.limit += data.length
+          }
+          this.$set(this, 'list', data)
+        } catch (e) {
+          console.log(e)
         }
-        else {
-          data = (await axios.get(`${apiGiphyConfig.trending}?api_key=${apiGiphyConfig.apiKey}&limit=${this.limit * this.currentIndex}`)).data.data
-        }
-        this.$set(this, 'list', data)
+
+
       }
     }
   }
